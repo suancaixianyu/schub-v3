@@ -1,0 +1,80 @@
+@import url('./navigation.scss');
+@import url('./home.scss');
+@import url('./postbody.scss');
+@import url('./detail.scss');
+@import url('./user.scss');
+
+body {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: 'iconfont';
+  src: url('../../public/fonts/iconfont.woff2?t=1700452827306') format('woff2'),
+    url('../../public/fonts/iconfont.woff?t=1700452827306') format('woff'), url('../../public/fonts/iconfont.ttf?t=1700452827306') format('truetype');
+}
+
+/** 按钮激活后的颜色 */
+.activation {
+  color: brown;
+}
+
+.iconfont {
+  font-family: 'iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.flex {
+  display: flex;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+a.no-underline {
+  text-decoration: none;
+}
+a {
+  color: var(--el-text-color-primary);
+  text-decoration: none;
+}
+
+.el-menu {
+  border: none;
+}
+
+*::-webkit-scrollbar {
+  /* 设置滚动条的宽度 */
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  /* 设置滚动条的背景颜色 */
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  /* 设置滚动条的颜色 */
+  background-color: #c1c1c1;
+  border: none;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  /* 设置滚动条悬停时的颜色 */
+  background-color: #787878;
+  border: none;
+  border-radius: 4px;
+}
