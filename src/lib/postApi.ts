@@ -203,3 +203,32 @@ export async function del_bbs(id: number) {
   }
   return false
 }
+
+/**
+ * 设置用户头像
+ * @param e 请求结果
+ */
+export async function setAvatar(e: any) {
+  api_post('/user/edit', { avatar: e.data.src })
+    .then((res) => {
+      let obj = res.data as api
+      if (obj.code == 200) {
+        ElMessage({
+          type: 'success',
+          message: obj.msg,
+        })
+        getInformation()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: obj.msg,
+        })
+      }
+    })
+    .catch((err) => {
+      ElMessage({
+        type: 'error',
+        message: '请求错误：' + err.message,
+      })
+    })
+}

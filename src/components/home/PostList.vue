@@ -114,7 +114,6 @@ export default {
   },
 
   async mounted() {
-    console.log('PostList path', this.$route.path)
     for (let i = 0; i < 12; i++) {
       this.list.push({
         id: 0,
@@ -163,9 +162,7 @@ export default {
         this.pageid = 1
         this.load = true
         this.text = '加载中~'
-        console.log('加载新页')
         let data: any = await getBbsList(`${cateid}`, { page: this.pageid, limit: this.limit })
-        console.log('data', data)
         if (data.list) {
           this.list = data.list
           this.pagenum = data.num
@@ -183,9 +180,8 @@ export default {
      */
     async next() {
       if (this.load) return
-      console.log('触发加载')
       if (this.pageid >= this.pagenum) {
-        console.log('加载到底')
+        // console.log('加载到底')
         this.isbottom = true
         this.text = '到底了~'
       } else {
@@ -198,11 +194,11 @@ export default {
         // 缓存中存在此页
         let postList = getPostList(cateid)
         if (this.loadpage < this.pagenum && postList && postList.list[this.loadpage]) {
-          console.log('加载缓存页')
+          // console.log('加载缓存页')
           // 拷贝this.list
           this.list.push(...postList.list[this.loadpage])
         } else {
-          console.log('加载更多新页')
+          // console.log('加载更多新页')
           let data: any = await getBbsList(cateid, { page: this.pageid, limit: this.limit })
           if (data.list) {
             this.list.push(...data.list)

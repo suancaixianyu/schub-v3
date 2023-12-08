@@ -29,6 +29,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElText: typeof import('element-plus/es')['ElText']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     Home: typeof import('./src/components/Home.vue')['default']
     Index: typeof import('./src/components/Index.vue')['default']
     Navigation: typeof import('./src/components/navigation/Navigation.vue')['default']

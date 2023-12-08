@@ -17,7 +17,7 @@ const routes = [
     ],
   },
   {
-    path: '/user',
+    path: '/user/:uid?',
     component: () => import('@comps/user/Index.vue'),
   },
 ]
