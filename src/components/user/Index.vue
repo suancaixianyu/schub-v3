@@ -33,7 +33,7 @@
       </div>
 
       <div class="headbtn hidden-xs-only" v-if="userInfo.state.isLogin && !uid">
-        <el-button round class="iconfont">&#xe8cf;编辑个人信息</el-button>
+        <el-button round class="iconfont" @click="tosetup">&#xe8cf;编辑个人信息</el-button>
       </div>
     </div>
 
@@ -66,6 +66,9 @@ export default {
     this.uid = uid
   },
   methods: {
+    tosetup() {
+      this.$router.push('/user/setup')
+    },
     uploadCover(e: any) {
       this.userInfo.data.headurl = getHostUrl(e.data.src)
       setAvatar(e)

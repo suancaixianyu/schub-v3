@@ -20,6 +20,10 @@ const routes = [
     path: '/user/:uid?',
     component: () => import('@comps/user/Index.vue'),
   },
+  {
+    path: '/user/setup',
+    component: () => import('@comps/user/Setup.vue'),
+  },
 ]
 const router = createRouter({
   history: createWebHashHistory(),

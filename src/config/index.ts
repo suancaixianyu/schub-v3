@@ -43,13 +43,8 @@ export const setUserInfo = (data: any) => (userInfo = data)
 export { userInfo }
 export const config = {
   /** 后端服务器地址 */
-  //  server: "http://localhost:8081",
-  // server: '/xyapi',
-  // server: "http://suancaixianyu.cn:8000",
   server: 'https://m.schub.top',
-  // view: 'http://localhost:4000',
-  view: 'https://www.schub.top',
-  captchaserver: 'https://api.schub.top',
+  lang: 'zh-CN',
 }
 
 export const cateicon: cateIcon = {

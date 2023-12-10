@@ -8,7 +8,7 @@
 import { getHostUrl } from '@/api'
 export default {
   name: 'UserHead',
-  props: ['src', 'alt', 'size'],
+  props: ['src', 'alt'],
   methods: {
     getUrl(v: string) {
       return getHostUrl(v)

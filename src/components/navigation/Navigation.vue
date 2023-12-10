@@ -4,7 +4,7 @@
       <router-link to="/cate/0">
         <button>
           <span class="iconfont" style="font-size: 2rem">&#xe617;</span>
-          <el-text class="title">SC中文社区</el-text>
+          <el-text class="title">{{ $t('title') }}</el-text>
         </button>
       </router-link>
     </li>
@@ -53,48 +53,31 @@
         @open="true"
         :unique-opened="true"
       >
+        <!-- 工具 -->
         <el-sub-menu index="1">
           <template #title>
             <span>
               <span class="iconfont" style="font-size: 20px; margin-left: 3px"> &#xe649; </span>
-              工具
+              {{ $t('usercard.6') }}
             </span>
           </template>
-          <el-menu-item-group title="外部工具" style="background-color: var(--el-bg-color)">
-            <a href="http://suancaixianyu.gitee.io/sss">
+          <el-menu-item-group v-for="(item, i) in tools" :key="i" :title="item.title" style="background-color: var(--el-bg-color)">
+            <a :href="x.href" v-for="(x, j) in item.url" :key="j">
               <el-menu-item index="1">
-                <el-icon> <Paperclip /> </el-icon>简谱转换
-              </el-menu-item>
-            </a>
-
-            <a href="https://schub.wiki/gpt">
-              <el-menu-item index="2">
-                <el-icon> <Paperclip /> </el-icon>白嫖gpt(需科学上网)
-              </el-menu-item>
-            </a>
-          </el-menu-item-group>
-          <el-menu-item-group title="MOD制作" style="background-color: var(--el-bg-color)">
-            <a href="https://www.yuque.com/u589148/wf2knt" target="_blank">
-              <el-menu-item index="3">
-                <el-icon> <Paperclip /> </el-icon>Mod开发教程
-              </el-menu-item>
-            </a>
-
-            <a href="https://schub.wiki/scapi" target="_blank">
-              <el-menu-item index="4">
-                <el-icon> <Paperclip /> </el-icon>SC-API文档(建设中)
+                <el-icon> <Paperclip /> </el-icon>{{ x.name }}
               </el-menu-item>
             </a>
           </el-menu-item-group>
         </el-sub-menu>
 
+        <!-- 板块列表 -->
         <el-sub-menu index="2">
           <template #title>
             <el-icon><Expand /></el-icon>
-            <span>板块列表</span>
+            <span>{{ $t('usercard.11') }}</span>
           </template>
 
-          <el-menu-item index="#" v-if="catelist.length == 0" style="background-color: var(--el-bg-color)"> 什么也没有 </el-menu-item>
+          <el-menu-item index="#" v-if="catelist.length == 0" style="background-color: var(--el-bg-color)"> {{ $t('usercard.10') }} </el-menu-item>
           <el-menu-item :index="`/cate/${index}`" v-for="(x, index) of catelist" :key="x" style="background-color: var(--el-bg-color)"
             ><span class="iconfont" v-html="config.cateicon[`${x.id}`] + ' ' + x.name"></span>
           </el-menu-item>
@@ -102,8 +85,8 @@
 
         <el-menu-item index="#">
           <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between" @click="switchTheme()">
-            <span class="iconfont" v-if="config.setup.currentSkin">&#xe614; 深色模式</span>
-            <span class="iconfont" v-else>&#xe615; 深色模式</span>
+            <span class="iconfont" v-if="config.setup.currentSkin" style="margin-left: 4px"> &#xe614; {{ $t('usercard.1') }}</span>
+            <span class="iconfont" v-else style="margin-left: 4px"> &#xe615; {{ $t('usercard.2') }}</span>
             <el-switch
               style="margin-left: auto"
               @click="switchTheme()"
@@ -119,14 +102,14 @@
           <el-icon>
             <setting />
           </el-icon>
-          <span>设置</span>
+          <span>{{ $t('usercard.3') }}</span>
         </el-menu-item>
 
         <el-menu-item index="/user">
           <el-icon>
             <setting />
           </el-icon>
-          <span>用户中心</span>
+          <span>{{ $t('usercard.4') }}</span>
         </el-menu-item>
       </el-menu>
     </div>
@@ -141,7 +124,7 @@
     <img
       loading="lazy"
       :src="userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589092}.png'"
-      alt="主页背景图"
+      :alt="$t('usercard.0')"
       class="headimg"
     />
     <div class="body">
@@ -164,118 +147,106 @@
       <div class="hr"></div>
 
       <div class="item" @click="switchTheme()">
-        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)">&#xe614; 深色模式</span>
-        <span class="iconfont" v-else>&#xe615; 深色模式</span>
+        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)">&#xe614; {{ $t('usercard.1') }}</span>
+        <span class="iconfont" v-else>&#xe615; {{ $t('usercard.2') }}</span>
         <el-switch class="switch" @click="switchTheme()" v-model="config.setup.currentSkin" inline-prompt active-text="是" inactive-text="否" />
       </div>
 
       <router-link to="/setup">
         <div class="item" style="justify-content: left">
           <b class="iconfont" tag="b">&#xe892;</b>&#160;
-          <span class="iconfont" style="padding-bottom: 3px">设置</span>
+          <span class="iconfont" style="padding-bottom: 3px">{{ $t('usercard.3') }}</span>
         </div>
       </router-link>
 
       <router-link to="/user" v-if="userInfo.state.isLogin">
         <div class="item" style="justify-content: left">
           <b class="iconfont" tag="b">&#xe9d4;</b>&#160;
-          <span class="iconfont" style="padding-bottom: 3px">用户中心</span>
+          <span class="iconfont" style="padding-bottom: 3px">{{ $t('usercard.4') }}</span>
         </div>
       </router-link>
 
       <div class="hr"></div>
 
-      <div class="group">
-        <div class="title">外部工具</div>
-        <div class="item">
-          <a href="http://suancaixianyu.gitee.io/sss" class="iconfont"> &#xe621; 简谱转换 </a>
-        </div>
-        <div class="item">
-          <a href="https://schub.wiki/gpt" class="iconfont"> &#xe621; 白嫖gpt(需科学上网) </a>
-        </div>
-      </div>
-
-      <div class="group">
-        <div class="title">Mod制作</div>
-        <div class="item">
-          <a href="https://www.yuque.com/u589148/wf2knt" class="iconfont"> &#xe621; Mod开发教程 </a>
-        </div>
-        <div class="item">
-          <a href="https://schub.wiki/scapi" class="iconfont"> &#xe621; SC-API文档(建设中) </a>
+      <!-- 外部工具 -->
+      <div class="group" v-for="(item, i) in tools" :key="i">
+        <div class="title">{{ item.title }}</div>
+        <div class="item" v-for="(x, j) in item.url" :key="j">
+          <a :href="x.href" class="iconfont"> &#xe621; {{ x.name }} </a>
         </div>
       </div>
 
       <a @click="out" v-if="userInfo.state.isLogin">
         <div class="item" style="justify-content: left">
           <b class="iconfont" tag="b">&#xe9d4;</b>&#160;
-          <span class="iconfont" style="padding-bottom: 3px">退出登录</span>
+          <span class="iconfont" style="padding-bottom: 3px">{{ $t('usercard.5') }}</span>
         </div>
       </a>
 
-      <el-divider>诶嘿</el-divider>
+      <el-divider>{{ $t('usercard.9') }}</el-divider>
     </div>
   </div>
   <!-- 登录卡片 -->
   <div class="bg" style="pointer-events: none">
     <div class="loginbody" v-if="signin" :class="loginstate">
       <el-image src="../../../public/imgs/b432c72abcc127e589f71160dcec7b12.jpg" class="hidden-xs-only titleimg"></el-image>
-      <el-form :model="loginconfig.login" class="form" label-width="4rem" label-position="top" v-if="page == '登录'">
+      <el-form :model="loginconfig.login" class="form" label-width="4rem" label-position="top" v-if="pageid == 1">
         <el-form-item>
-          <span class="title">{{ page }}</span>
+          <span class="title">{{ page[pageid] }}</span>
         </el-form-item>
-        <el-form-item label="邮箱" prop="user">
-          <el-input v-model="loginconfig.login.user" type="email" placeholder="输入邮箱" />
+        <el-form-item :label="$t('login.2')" prop="user">
+          <el-input v-model="loginconfig.login.user" type="email" :placeholder="$t('login.3')" />
         </el-form-item>
 
-        <el-form-item label="密码" prop="pass">
-          <el-input @keyup.enter="onlogin" v-model="loginconfig.login.pass" type="password" placeholder="输入密码" show-password />
+        <el-form-item :label="$t('login.4')" prop="pass">
+          <el-input @keyup.enter="onlogin" v-model="loginconfig.login.pass" type="password" :placeholder="$t('login.5')" show-password />
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="remember" label="记住账号" size="large" />
+          <el-checkbox v-model="remember" :label="$t('login.6')" size="large" />
         </el-form-item>
 
         <el-form-item label="">
-          <span>没有账号？</span>
-          <el-button type="primary" link @click="loginswitch('注册')">点击注册</el-button>
+          <span>{{ $t('login.8') }}</span>
+          <el-button type="primary" link @click="loginswitch(2)">{{ $t('login.11') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loginswitch('验证码')">登录</el-button>
-          <el-button @click="start">取消</el-button>
+          <el-button type="primary" @click="loginswitch(3)">{{ $t('login.0') }}</el-button>
+          <el-button @click="start">{{ $t('login.10') }}</el-button>
         </el-form-item>
       </el-form>
 
-      <el-form :rules="rules" :model="loginconfig.regitser" class="form" label-width="4.5rem" label-position="top" v-if="page == '注册'" status-icon>
+      <el-form :rules="rules" :model="loginconfig.regitser" class="form" label-width="4.5rem" label-position="top" v-if="pageid == 2" status-icon>
         <el-form-item>
-          <span class="title">{{ page }}</span>
+          <span class="title">{{ page[pageid] }}</span>
         </el-form-item>
-        <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="loginconfig.regitser.nickname" type="text" placeholder="输入昵称" />
+        <el-form-item :label="$t('login.12')" prop="nickname">
+          <el-input v-model="loginconfig.regitser.nickname" type="text" :placeholder="$t('login.13')" />
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="loginconfig.regitser.email" type="email" placeholder="输入邮箱" />
+        <el-form-item :label="$t('login.2')" prop="email">
+          <el-input v-model="loginconfig.regitser.email" type="email" :placeholder="$t('login.3')" />
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
-          <el-input v-model="loginconfig.regitser.pass" type="password" placeholder="输入密码" show-password />
+        <el-form-item :label="$t('login.4')" prop="pass">
+          <el-input v-model="loginconfig.regitser.pass" type="password" :placeholder="$t('login.5')" show-password />
         </el-form-item>
-        <el-form-item label="确认密码" prop="repass">
-          <el-input v-model="loginconfig.regitser.repass" type="password" placeholder="输入密码" show-password />
+        <el-form-item :label="$t('login.14')" prop="repass">
+          <el-input v-model="loginconfig.regitser.repass" type="password" :placeholder="$t('login.5')" show-password />
         </el-form-item>
-        <el-form-item label="邀请码" prop="invitation">
-          <el-input v-model="loginconfig.regitser.invitation" type="text" placeholder="邀请码" />
+        <el-form-item :label="$t('login.15')" prop="invitation">
+          <el-input v-model="loginconfig.regitser.invitation" type="text" :placeholder="$t('login.15')" />
         </el-form-item>
         <el-form-item label="">
-          <span>已有账号？</span>
-          <el-button type="primary" link @click="loginswitch('登录')">点击登录</el-button>
+          <span>{{ $t('login.17') }}</span>
+          <el-button type="primary" link @click="loginswitch(1)">{{ $t('login.16') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loginswitch('验证码')">注册</el-button>
-          <el-button @click="start">取消</el-button>
+          <el-button type="primary" @click="loginswitch(3)">{{ $t('login.1') }}</el-button>
+          <el-button @click="start">{{ $t('login.10') }}</el-button>
         </el-form-item>
       </el-form>
 
-      <div v-if="page == '验证码'" class="captcha">
+      <div v-if="pageid == 3" class="captcha">
         <div class="item">
-          <el-input v-model="imgcode" type="text" style="max-width: 300px" placeholder="图片验证码" />
+          <el-input v-model="imgcode" type="text" style="max-width: 300px" :placeholder="$t('login.18')" />
         </div>
         <div class="item">
           <div v-if="codeSrc == ''" style="width: 250px; height: 62px"></div>
@@ -287,8 +258,8 @@
         </div>
 
         <div class="item">
-          <el-button type="primary" @click="onlogin" :loading="loadingbutton"> 确定 </el-button>
-          <el-button @click="loginswitch(backpage)">返回</el-button>
+          <el-button type="primary" @click="onlogin" :loading="loadingbutton">{{ $t('login.19') }}</el-button>
+          <el-button @click="loginswitch(backpage)">{{ $t('login.20') }}</el-button>
         </div>
       </div>
     </div>
@@ -303,12 +274,19 @@ import UserHead from '@comps/user/UserHead.vue'
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 import { ElMessageBox } from 'element-plus'
 import UserRole from '@comps/user/UserRole.vue'
-
+import i18n from '@/i18n.ts'
 export default {
   name: 'Navigation',
   data() {
     let src = getHostUrl('/captcha')
+    const $t = i18n.t
     return {
+      $t,
+      langname: '简体中文',
+      langs: {
+        'zh-CN': '简体中文',
+        'en-US': 'English',
+      } as { [key: string]: string },
       drawer: false,
       userInfo: config.userInfo,
       config,
@@ -316,8 +294,13 @@ export default {
       catelist: [] as cateList[],
       activeIndex: '/',
       menu: false,
-      page: '登录',
-      backpage: '',
+      page: {
+        1: '登录',
+        2: '注册',
+        3: '验证码',
+      },
+      pageid: 1,
+      backpage: 1,
       bgshow: false,
       menustate: '',
       bgstate: '',
@@ -330,6 +313,32 @@ export default {
       imgcode: '', // 图片验证马链接
       baseCodeSrc: src,
       signintitle: '',
+      /** 外部工具 */
+      tools: [
+        {
+          title: $t('usercard.7'),
+          url: [
+            {
+              href: 'https://www.schub.wiki/scapi',
+              name: 'SC-API文档(建设中)',
+            },
+            {
+              href: 'https://www.yuque.com/u589148/wf2knt',
+              name: 'Mod开发教程',
+            },
+          ],
+        },
+        {
+          title: $t('usercard.6'),
+          url: [
+            {
+              href: 'http://suancaixianyu.gitee.io/sss',
+              name: '简谱转换工具',
+            },
+          ],
+        },
+      ],
+      /** 登录配置 */
       loginconfig: {
         regitser: {
           pass: '',
@@ -347,22 +356,23 @@ export default {
           pass_uuid: '',
         },
       },
+      /** 输入框错误提示 */
       rules: {
         email: [
           {
             required: true,
-            message: '邮箱不能为空',
+            message: $t('login.prompt.0'),
             trigger: 'blur',
           },
           {
             type: 'email',
-            message: '请输入正确的邮箱',
+            message: $t('login.prompt.1'),
             trigger: ['blur', 'change'],
           },
           {
             validator: (_rule: any, value: any, callback: any) => {
               if (value && !/(@qq\.com|@gmail\.com|@outlook\..*)$/.test(value)) {
-                callback(new Error('仅支持@qq.com、@gmail.com、@outlook.com邮箱'))
+                callback(new Error($t('login.prompt.2')))
               }
             },
             trigger: 'blur',
@@ -371,14 +381,14 @@ export default {
         pass: [
           {
             required: true,
-            message: '密码不能为空',
+            message: $t('login.prompt.3'),
             trigger: 'blur',
           },
         ],
         repass: [
           {
             required: true,
-            message: '密码不能为空',
+            message: $t('login.prompt.3'),
             trigger: 'blur',
           },
           {
@@ -389,19 +399,19 @@ export default {
         nickname: [
           {
             required: true,
-            message: '昵称不能为空',
+            message: $t('login.prompt.6'),
             trigger: 'blur',
           },
           {
             min: 2,
             max: 10,
-            message: '昵称长度只能是2到10',
+            message: $t('login.prompt.7'),
             trigger: 'blur',
           },
           {
             validator: (_rule: any, value: any, callback: any) => {
               if (value && !/^[\u4E00-\u9FA5A-Za-z0-9_]+$/.test(value)) {
-                callback(new Error('昵称只能由汉字、英文字母、数字、下划线组成'))
+                callback(new Error($t('login.prompt.8')))
               }
             },
             trigger: 'blur',
@@ -410,7 +420,7 @@ export default {
         invitation: [
           {
             required: true,
-            message: '邀请码不能为空',
+            message: $t('login.prompt.9'),
             trigger: 'blur',
           },
         ],
@@ -428,9 +438,9 @@ export default {
       this.catelist = [
         {
           id: 0,
-          name: '全部板块',
+          name: this.$t('usercard.12'),
           interaction: 0,
-          introduce: '全部板块',
+          introduce: this.$t('usercard.12'),
           postnum: 0,
           stat: 1,
         },
@@ -443,10 +453,15 @@ export default {
     }
   },
   methods: {
+    setlang(lang: string) {
+      i18n.setLocale(lang)
+      config.config.lang = lang
+      this.langname = this.langs[lang]
+    },
     /** 退出登录 */
     out() {
-      ElMessageBox.alert('确定要退出登录吗？', '退出登录', {
-        confirmButtonText: '确定',
+      ElMessageBox.alert(this.$t('login.21'), this.$t('login.22'), {
+        confirmButtonText: this.$t('login.19'),
         callback: async () => {
           await loginOut()
           this.$router.push({ path: '/cate/0' })
@@ -456,7 +471,7 @@ export default {
     /** 密码验证 */
     pass2(_rule: any, value: any, callback: any) {
       if (value && value != this.loginconfig.regitser.pass) {
-        callback(new Error('两次密码不一致'))
+        callback(new Error(this.$t('login.prompt.4')))
       }
       callback()
     },
@@ -466,10 +481,10 @@ export default {
       this.codeSrc = this.baseCodeSrc + '?t=' + new Date().getTime()
     },
     /** 页面切换 */
-    loginswitch(title: string) {
-      this.backpage = this.page
-      this.page = title
-      if (title == '验证码') this.refreshCode()
+    loginswitch(id: number) {
+      this.backpage = this.pageid
+      this.pageid = id
+      if (id == 3) this.refreshCode()
     },
     addHcaptchaToken(token: string) {
       this.captcha_code = token
@@ -478,17 +493,17 @@ export default {
     async onlogin() {
       if (this.loadingbutton) return
       if (!this.captcha_code || !this.imgcode) {
-        alert('验证码不能为空')
+        alert(this.$t('login.prompt.5'))
         return
       }
       this.loadingbutton = true
       switch (this.backpage) {
-        case '登录':
+        case 1:
           this.loginconfig.login.captcha_code = this.imgcode
           this.loginconfig.login.pass_uuid = this.captcha_code
           this.loadingbutton = await login('/user/login', this.loginconfig.login, this.remember)
           break
-        case '注册':
+        case 2:
           this.loginconfig.regitser.captcha_code = this.imgcode
           this.loginconfig.regitser.pass_uuid = this.captcha_code
           this.loadingbutton = await login('/user/register', this.loginconfig.regitser, this.remember)

@@ -37,6 +37,7 @@ declare module 'vue' {
     PostList: typeof import('./src/components/home/PostList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Setup: typeof import('./src/components/user/Setup.vue')['default']
     User: typeof import('./src/components/user/index.vue')['default']
     UserHead: typeof import('./src/components/user/UserHead.vue')['default']
     UserRole: typeof import('./src/components/user/UserRole.vue')['default']

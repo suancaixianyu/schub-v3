@@ -1,4 +1,4 @@
-import { Pools, cateList, postList } from '@/types'
+import { Pools, cateList, postList } from '../types'
 import { toRefs, reactive } from 'vue'
 
 /**

@@ -49,11 +49,11 @@
         <div class="detailWindow right">
           <div class="msglist">
             <div class="top">
-              <el-text>评论：{{ num }}</el-text>
+              <el-text>{{ $t('detail.0') }}: {{ num }}</el-text>
               <div>
-                <el-button link>最新</el-button>
+                <el-button link>{{ $t('detail.1') }}</el-button>
                 <el-divider direction="vertical" />
-                <el-button link>最早</el-button>
+                <el-button link>{{ $t('detail.2') }}</el-button>
               </div>
             </div>
             <!-- 骨架屏 -->
@@ -118,7 +118,7 @@
                           <el-text class="nickname" type="primary" size="large" @click="replycom(item.id, x.author.nickname, x.id)">
                             {{ x.author.nickname }}
                           </el-text>
-                          <el-text size="large">{{ x.to_author ? ` 回复 ` : '' }}</el-text>
+                          <el-text size="large">{{ x.to_author ? ` ${$t('detail.3')} ` : '' }}</el-text>
                           <el-text size="large" class="nickname" type="primary">{{ x.to_author?.nickname }}</el-text>
                           <el-text size="large">: {{ x.content }}</el-text>
                         </div>
@@ -135,8 +135,8 @@
                         >
                           &#xe602; {{ item.likes }}
                         </el-button>
-                        <el-button class="iconfont" link @click="replycom(item.id, item.author.nickname)">&#xe86f; 回复</el-button>
-                        <el-button class="iconfont" link @click="delreply(item.id)" v-if="userInfo.data.isAdmin">删除</el-button>
+                        <el-button class="iconfont" link @click="replycom(item.id, item.author.nickname)">&#xe86f; {{ $t('detail.4') }}</el-button>
+                        <el-button class="iconfont" link @click="delreply(item.id)" v-if="userInfo.data.isAdmin">{{ $t('detail.5') }}</el-button>
                       </div>
                     </div>
                   </div>
@@ -148,20 +148,20 @@
           </div>
           <div class="bottom">
             <el-input v-model="message" autosize type="textarea" :placeholder="placeholder" v-on:keyup.delete="del" @dblclick="openMdEditor" />
-            <el-button type="primary" @click="reply" :loading="loadingbutton">发送</el-button>
+            <el-button type="primary" @click="reply" :loading="loadingbutton">{{ $t('detail.6') }}</el-button>
           </div>
         </div>
       </div>
     </div>
     <div class="backbtn">
-      <el-button class="btns" type="danger" :icon="CloseBold" circle @click="back" />
-      <el-button class="btns" type="success" :icon="Share" circle @click="copyurl" />
-      <el-button class="btns" type="warning" :icon="Delete" circle @click="delpost" />
+      <el-button class="btns" type="danger" :icon="CloseBold" circle @click="back" :title="$t('detail.7')" />
+      <el-button class="btns" type="success" :icon="Share" circle @click="copyurl" :title="$t('detail.8')" />
+      <el-button class="btns" type="warning" :icon="Delete" circle @click="delpost" :title="$t('detail.9')" />
     </div>
   </div>
 
-  <el-dialog v-model="showMdEditor" title="全屏输入" align-center :fullscreen="true">
-    <MdEditor editorId="previewOne" :preview="true" v-model="message" @onUploadImg="UploadImage" style="height: 85vh" />
+  <el-dialog v-model="showMdEditor" :title="$t('detail.10')" align-center :fullscreen="true">
+    <MdEditor :language="lang" editorId="previewOne" :preview="true" v-model="message" @onUploadImg="UploadImage" style="height: 85vh" />
   </el-dialog>
 </template>
 
@@ -172,6 +172,7 @@ import { replyOne, viewBbsItem } from '@/types'
 import { ElMessage } from 'element-plus'
 import UserRole from '@comps/user/UserRole.vue'
 import { MdPreview, MdEditor } from 'md-editor-v3'
+import i18n from '@/i18n.ts'
 
 export default {
   name: 'Detail',
@@ -180,10 +181,12 @@ export default {
       CloseBold,
       Delete,
       Share,
+      $t: i18n.t,
       item: {} as viewBbsItem,
       replylist: [] as replyOne[],
       setup: config.setup,
       userInfo: config.userInfo,
+      lang: config.config.lang,
       showskeleton: true,
       showmsgskeleton: true,
       message: '',
@@ -274,13 +277,11 @@ export default {
 
     /** 点赞 */
     async doreplylike(id: number) {
+      this.disabledLike = true
       if (await reply_good(id)) {
-        ElMessage({
-          type: 'success',
-          message: '点赞成功',
-        })
         this.refresh_reply_list(this.bid)
       }
+      this.disabledLike = false
     },
     /** 回复 */
     async reply() {

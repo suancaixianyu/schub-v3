@@ -1,0 +1,27 @@
+.usersetup {
+  display: flex;
+  justify-content: center;
+
+  .group {
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    width: 40vw;
+    background-color: var(--el-color-info-light-9);
+  }
+
+  .item {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 0.5rem;
+  }
+  .item:hover {
+    background-color: var(--el-color-info-light-8);
+  }
+
+  @media (max-width: 768px) {
+    .group {
+      width: 90vw;
+    }
+  }
+}

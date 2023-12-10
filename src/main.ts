@@ -23,8 +23,12 @@ import 'animate.css/animate.min.css'
 // 后引入自定义样式以覆盖预设
 import './styles/style.scss'
 
-const app = createApp(App)
+// 语言
+import i18n from './i18n'
 
+const app = createApp(App)
+app.config.globalProperties.$t = i18n.t
+app.use(i18n)
 app.use(router)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
@@ -32,5 +36,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus, {
   locale: zhCn,
 })
-
 app.mount('#app')

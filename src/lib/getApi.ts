@@ -140,7 +140,9 @@ export async function getBbsReply(id: number, page: number, limit: number, sort:
         }
         list.push(el)
       })
-      return { list, num: obj.sum?.total }
+      //移除id相同的内容
+      const uniqueArray = list.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id))
+      return { list: uniqueArray, num: obj.sum?.total }
     }
     return false
   })
@@ -152,7 +154,11 @@ export async function getBbsReply(id: number, page: number, limit: number, sort:
 export async function reply_good(id: number | string) {
   let res = await api_get(`/bbs/reply_good/${id}`)
   let data = res.data as api
-  if (data.code) {
+  if (data.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: data.msg,
+    })
     return true
   }
   return false
