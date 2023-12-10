@@ -92,8 +92,8 @@
               @click="switchTheme()"
               v-model="config.setup.currentSkin"
               inline-prompt
-              active-text="是"
-              inactive-text="否"
+              :active-text="$t('usercard.13')"
+              :inactive-text="$t('usercard.14')"
             />
           </div>
         </el-menu-item>
@@ -105,12 +105,21 @@
           <span>{{ $t('usercard.3') }}</span>
         </el-menu-item>
 
-        <el-menu-item index="/user">
+        <el-menu-item index="/user" v-if="userInfo.state.isLogin">
           <el-icon>
             <setting />
           </el-icon>
           <span>{{ $t('usercard.4') }}</span>
         </el-menu-item>
+
+        <el-sub-menu index="3">
+          <template #title>
+            <span>{{ $t('usercard.8') }}: {{ langname }}</span>
+          </template>
+
+          <el-menu-item class="item" @click="setlang('zh-CN')">简体中文</el-menu-item>
+          <el-menu-item class="item" @click="setlang('en-US')">English</el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </div>
   </el-drawer>
@@ -174,6 +183,12 @@
         <div class="item" v-for="(x, j) in item.url" :key="j">
           <a :href="x.href" class="iconfont"> &#xe621; {{ x.name }} </a>
         </div>
+      </div>
+
+      <div class="group">
+        <div class="title">{{ $t('usercard.8') }}: {{ langname }}</div>
+        <div class="item" @click="setlang('zh-CN')">简体中文</div>
+        <div class="item" @click="setlang('en-US')">English</div>
       </div>
 
       <a @click="out" v-if="userInfo.state.isLogin">
