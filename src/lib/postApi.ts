@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as Cfg from '../config'
 import { ElMessage } from 'element-plus'
 import { getHostUrl, formatBbsTime, getNumber, localSet } from './tools'
-import { api, bbsItem, viewBbsItem } from '@/types'
+import { api, bbsItem, getUserInfoType, viewBbsItem } from '@/types'
 import { api_get, getInformation } from './getApi'
 import { userInfo } from '../config'
 
@@ -181,6 +181,10 @@ export async function replyComment(url: string, body: object) {
   return false
 }
 
+/**
+ * 删除回复（管理员）
+ * @param id 回复id
+ */
 export async function del_reply(id: number) {
   let res = await api_post('/bbs/reply_del', { id })
   let data = res.data as api
@@ -190,6 +194,10 @@ export async function del_reply(id: number) {
   return false
 }
 
+/**
+ * 删除指定帖子（管理员可用）
+ * @param id 帖子id
+ */
 export async function del_bbs(id: number) {
   let res
   if (userInfo.data.isAdmin) {
@@ -230,5 +238,32 @@ export async function setAvatar(e: any) {
         type: 'error',
         message: '请求错误：' + err.message,
       })
+    })
+}
+
+/**
+ * 获取指定用户信息
+ * @param id 用户id
+ */
+export async function getUserInfo(uid: string | number) {
+  let res = await api_post('/user/info', { uid: uid })
+  if (res && res.data.code == 200) {
+    return res.data as { code: number; msg: string; data: getUserInfoType }
+  } else {
+    return false
+  }
+}
+
+export async function setSignature(config: object) {
+  return await api_post('/user/edit', config)
+    .then((res) => {
+      if (res.data.code == 200) {
+        return true
+      } else {
+        return false
+      }
+    })
+    .catch(() => {
+      return false
     })
 }

@@ -42,11 +42,11 @@ export interface userInfoType {
     /** uid */
     id: number
     /** 昵称 */
-    nickname?: string
+    nickname: string
     /** 邮箱 */
     account: string
     /** 头像链接 */
-    headurl?: string
+    headurl: string
     /** 注册时间 */
     reg_time: number
     /** 最后登录时间 */
@@ -58,8 +58,29 @@ export interface userInfoType {
     /** 是否为管理员 */
     isAdmin: boolean
     /** 背景图 */
-    background?: string
+    background: string
   }
+}
+
+export interface getUserInfoType {
+  /** uid */
+  id: number
+  /** 昵称 */
+  nickname: string
+  /** 邮箱 */
+  account: string
+  /** 头像链接 */
+  headurl: string
+  /** 注册时间 */
+  reg_time: number
+  /** 最后登录时间 */
+  last_login_time: number
+  /** 签名 */
+  signature: string
+  /** 头衔 */
+  role: any
+  /** 背景图 */
+  background: string
 }
 
 /** 板块类型 */

@@ -129,10 +129,10 @@
   <!-- 用户菜单 -->
   <div class="usercard" :class="menustate" v-if="menu">
     <!-- https://files.superbed.cn/store/superbed/1c/e8/64eb64df661c6c8e549e1ce8.png -->
-    <!-- <el-image fit="none" :lazy="true" src="../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589092}.png" class="headimg"></el-image> -->
+    <!-- <el-image fit="none" :lazy="true" src="../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png" class="headimg"></el-image> -->
     <img
       loading="lazy"
-      :src="userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589092}.png'"
+      :src="userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png'"
       :alt="$t('usercard.0')"
       class="headimg"
     />
@@ -204,7 +204,7 @@
   <!-- 登录卡片 -->
   <div class="bg" style="pointer-events: none">
     <div class="loginbody" v-if="signin" :class="loginstate">
-      <el-image src="../../../public/imgs/b432c72abcc127e589f71160dcec7b12.jpg" class="hidden-xs-only titleimg"></el-image>
+      <el-image src="../../../public/imgs/109834519_p0.jpg" class="hidden-xs-only titleimg"></el-image>
       <el-form :model="loginconfig.login" class="form" label-width="4rem" label-position="top" v-if="pageid == 1">
         <el-form-item>
           <span class="title">{{ page[pageid] }}</span>
