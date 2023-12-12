@@ -1,21 +1,28 @@
 <template>
   <Navigation />
-  <router-view />
+  <router-view v-if="load" />
 </template>
 
 <script lang="ts">
-import { getInformation } from '@/api'
+import { getInformation, getRoleRes } from '@/api'
 import Navigation from './navigation/Navigation.vue'
 export default {
   name: 'Index',
   components: {
     Navigation,
   },
-  mounted() {
+  data() {
+    return {
+      load: false,
+    }
+  },
+  async mounted() {
     console.log('index', this.$route.path)
-
-    getInformation()
     // if (this.$route.path == '/') this.$router.replace('')
+    if (await getInformation()) {
+      this.load = true
+    }
+    getRoleRes()
   },
 }
 </script>

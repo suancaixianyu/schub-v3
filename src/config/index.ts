@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
-import type { cateIcon, userInfoType } from '../types'
+import type { cateIcon, setupType, userInfoType } from '../types'
+import { localGet } from '@/lib'
 
 let userInfo: userInfoType = reactive({
   global_mod_data_list: {
@@ -10,8 +11,8 @@ let userInfo: userInfoType = reactive({
     flag_list: [],
     server_version_list: [],
   },
+  cate_list: {},
   role_list: [],
-  cate_list: [],
   state: {
     unreadMessage: 0,
     isLogin: false,
@@ -31,12 +32,24 @@ let userInfo: userInfoType = reactive({
 })
 
 /** 页面中各种状态 */
-export const setup = reactive({
-  /** 是否显示导航栏 */
-  showNavigation: true,
-  /** 是否为暗色主题 */
-  currentSkin: false,
-})
+let setup: setupType
+const setupdata = await localGet('setup', {})
+console.log(setupdata)
+if (setupdata.lang) {
+  setup = reactive(setupdata)
+} else {
+  setup = reactive({
+    /** 是否显示导航栏 */
+    showNavigation: true,
+    /** 是否为暗色主题 */
+    currentSkin: false,
+    /** 自己视角下是否显示签名 */
+    showSignature: true,
+    /** 语言 */
+    lang: 'zh-CN',
+  })
+}
+export { setup }
 
 /** 设置userInfo */
 export const setUserInfo = (data: any) => (userInfo = data)
@@ -44,7 +57,6 @@ export { userInfo }
 export const config = {
   /** 后端服务器地址 */
   server: 'https://m.schub.top',
-  lang: 'zh-CN',
 }
 
 export const cateicon: cateIcon = {

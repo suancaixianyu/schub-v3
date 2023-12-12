@@ -84,12 +84,12 @@
         </el-sub-menu>
 
         <el-menu-item index="#">
-          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between" @click="switchTheme()">
-            <span class="iconfont" v-if="config.setup.currentSkin" style="margin-left: 4px"> &#xe614; {{ $t('usercard.1') }}</span>
+          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between" @click="setTheme">
+            <span class="iconfont" v-if="config.setup.currentSkin" style="margin-left: 4px"> &#xe614; {{ $t('usercard.2') }}</span>
             <span class="iconfont" v-else style="margin-left: 4px"> &#xe615; {{ $t('usercard.2') }}</span>
             <el-switch
               style="margin-left: auto"
-              @click="switchTheme()"
+              @click="setTheme"
               v-model="config.setup.currentSkin"
               inline-prompt
               :active-text="$t('usercard.13')"
@@ -106,9 +106,7 @@
         </el-menu-item>
 
         <el-menu-item index="/user" v-if="userInfo.state.isLogin">
-          <el-icon>
-            <setting />
-          </el-icon>
+          <el-icon class="iconfont"> &#xe6a4; </el-icon>
           <span>{{ $t('usercard.4') }}</span>
         </el-menu-item>
 
@@ -155,10 +153,10 @@
 
       <div class="hr"></div>
 
-      <div class="item" @click="switchTheme()">
-        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)">&#xe614; {{ $t('usercard.1') }}</span>
+      <div class="item" @click="setTheme">
+        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)">&#xe614; {{ $t('usercard.2') }}</span>
         <span class="iconfont" v-else>&#xe615; {{ $t('usercard.2') }}</span>
-        <el-switch class="switch" @click="switchTheme()" v-model="config.setup.currentSkin" inline-prompt active-text="是" inactive-text="否" />
+        <el-switch class="switch" @click="setTheme" v-model="config.setup.currentSkin" inline-prompt active-text="是" inactive-text="否" />
       </div>
 
       <router-link to="/setup">
@@ -170,7 +168,7 @@
 
       <router-link to="/user" v-if="userInfo.state.isLogin">
         <div class="item" style="justify-content: left">
-          <b class="iconfont" tag="b">&#xe9d4;</b>&#160;
+          <b class="iconfont" tag="b">&#xe6a4;</b>&#160;
           <span class="iconfont" style="padding-bottom: 3px">{{ $t('usercard.4') }}</span>
         </div>
       </router-link>
@@ -283,13 +281,14 @@
 
 <script lang="ts">
 import { themes } from '@style/themes.ts'
-import { getcate, writePools, config, getHostUrl, login, loginOut } from '@/api'
+import { getcate, writePools, config, getHostUrl, login, loginOut, localSet } from '@/api'
 import { cateList } from '@/types'
 import UserHead from '@comps/user/UserHead.vue'
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 import { ElMessageBox } from 'element-plus'
 import UserRole from '@comps/user/UserRole.vue'
 import i18n from '@/i18n.ts'
+import { setup } from '@/config'
 export default {
   name: 'Navigation',
   data() {
@@ -448,6 +447,7 @@ export default {
     UserRole,
   },
   async mounted() {
+    this.switchTheme()
     const list = await getcate()
     if (list) {
       this.catelist = [
@@ -470,8 +470,9 @@ export default {
   methods: {
     setlang(lang: string) {
       i18n.setLocale(lang)
-      config.config.lang = lang
+      setup.lang = lang
       this.langname = this.langs[lang]
+      localSet('setup', setup)
     },
     /** 退出登录 */
     out() {
@@ -575,16 +576,21 @@ export default {
       this.activeIndex = index
     },
 
-    // 根据不同的主题类型 获取不同主题数据
+    setTheme() {
+      setup.currentSkin = !setup.currentSkin
+      this.switchTheme()
+    },
+
+    /** 根据不同的主题类型，获取不同主题数据 */
     switchTheme() {
       // themes 对象包含 defaultTheme、darkTheme 两个属性即默认主题与深色主题
-      let currentSkinName = this.config.setup.currentSkin ? 'defaultTheme' : 'darkTheme'
+      let currentSkinName = setup.currentSkin ? 'darkTheme' : 'defaultTheme'
       this.themeObj = themes[currentSkinName]
       // 设置css 变量
       Object.keys(this.themeObj).map((item) => {
         document.documentElement.style.setProperty(item, this.themeObj[item])
       })
-      this.config.setup.currentSkin = !this.config.setup.currentSkin
+      localSet('setup', setup)
     },
   },
 }

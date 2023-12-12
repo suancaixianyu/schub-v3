@@ -63,3 +63,14 @@ export interface postList {
     num: number
   }
 }
+
+export interface setupType {
+  /** 是否显示导航栏 */
+  showNavigation: boolean
+  /** 是否为暗色主题 */
+  currentSkin: boolean
+  /** 自己视角下是否显示签名 */
+  showSignature: boolean
+  /** 语言 */
+  lang: string
+}

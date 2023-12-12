@@ -5,6 +5,10 @@
         <span>{{ $t('setup.0') }}</span>
         <el-icon><ArrowRight /></el-icon>
       </div>
+      <div class="item" @click="setShowSignature">
+        <span>自己视角下显示签名</span>
+        <span>{{ setup.showSignature ? '显示' : '关闭' }}</span>
+      </div>
       <div class="item" @click="window.nickname = true">
         <span>{{ $t('setup.1') }}</span>
         <el-icon><ArrowRight /></el-icon>
@@ -54,8 +58,8 @@
 </template>
 
 <script lang="ts">
-import { UploadImage, setSignature } from '@/api'
-import { userInfo, config } from '@/config'
+import { UploadImage, localSet, setSignature } from '@/api'
+import { userInfo, setup } from '@/config'
 import i18n from '@/i18n.ts'
 import { ElMessage } from 'element-plus'
 import { MdEditor } from 'md-editor-v3'
@@ -67,7 +71,8 @@ export default {
     return {
       $t,
       userInfo,
-      lang: config.lang,
+      setup,
+      lang: setup.lang,
       window: {
         signature: false,
         nickname: false,
@@ -106,6 +111,10 @@ export default {
     MdEditor,
   },
   methods: {
+    setShowSignature() {
+      setup.showSignature = !setup.showSignature
+      localSet('setup', setup)
+    },
     async set(type: string) {
       if (await setSignature(this.userconfig)) {
         ElMessage({

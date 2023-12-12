@@ -186,7 +186,7 @@ export default {
       replylist: [] as replyOne[],
       setup: config.setup,
       userInfo: config.userInfo,
-      lang: config.config.lang,
+      lang: config.setup.lang,
       showskeleton: true,
       showmsgskeleton: true,
       message: '',

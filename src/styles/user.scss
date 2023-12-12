@@ -31,6 +31,29 @@
     height: 2rem;
     width: 100%;
   }
+
+  .view {
+    .title {
+      font-size: 1.5rem;
+    }
+    .key {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid var(--el-color-info-light-7);
+      .item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        .iconfont {
+          margin-right: 4px;
+        }
+      }
+    }
+    .content {
+      overflow-y: auto;
+      max-height: 30rem;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -48,6 +71,20 @@
     }
     .nackname {
       margin: 0 auto 1.5rem 1rem;
+    }
+
+    .view {
+      .title {
+        font-size: 1.5rem;
+      }
+      .key {
+        .item {
+          padding: 1rem 0;
+          .el-text {
+            font-size: large;
+          }
+        }
+      }
     }
   }
 }

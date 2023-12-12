@@ -267,3 +267,17 @@ export async function setSignature(config: object) {
       return false
     })
 }
+
+export async function getMyBbs(uid: number | string, config: object): Promise<false | any[]> {
+  return await api_post(`/user/my_bbs_list/${uid}`, config)
+    .then((res) => {
+      if (res.data.code == 200) {
+        return res.data.data as any[]
+      } else {
+        return false
+      }
+    })
+    .catch(() => {
+      return false
+    })
+}

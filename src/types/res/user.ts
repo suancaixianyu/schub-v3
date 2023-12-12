@@ -19,17 +19,8 @@ export interface userInfoType {
   role_list: any[]
   /** 板块列表 */
   cate_list: {
-    /** 板块id */
-    id: number
-    /** 板块名称 */
-    name: string
-    /** 帖子数 */
-    stat: number
-    /** 板块介绍 */
-    introduce: string
-  }[]
-  /** 用户ID */
-  id?: string
+    [key: number]: string
+  }
   /** 状态 */
   state: {
     /** 未读消息数 */
@@ -39,7 +30,7 @@ export interface userInfoType {
   }
   /** 用户信息 */
   data: {
-    /** uid */
+    /** 用户id */
     id: number
     /** 昵称 */
     nickname: string
@@ -111,4 +102,18 @@ export interface api {
   sum?: {
     total: number
   }
+}
+export interface viewBbsList {
+  /** 帖子id */
+  id: number
+  /** 所在板块id */
+  cate_id: number
+  /** 标题 */
+  title: string
+  /** 评论数 */
+  comments: number
+  /** 浏览量 */
+  views: number
+  /** 发布时间 */
+  create_time: string
 }

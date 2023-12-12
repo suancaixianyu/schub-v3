@@ -5,7 +5,7 @@
         1800: { rowPerView: 3 },
         1200: { rowPerView: 3 },
         800: { rowPerView: 2 },
-        500: { rowPerView: 2 },
+        480: { rowPerView: 1 },
       }"
       backgroundColor="var(--el-bg-color)"
       :list="list"

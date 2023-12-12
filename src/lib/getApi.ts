@@ -17,14 +17,29 @@ export function api_get(path: string) {
 /**
  * 刷新页面重新获取用户信息
  */
-export function getInformation(callback: any = null) {
+export async function getInformation(): Promise<boolean> {
   let { userInfo } = Cfg
-  //刷新页面重新获取用户信息
-  api_get('/user/role_list')
+
+  // 刷新页面重新获取用户信息
+  return await api_get('/user/role_list')
     .then((response) => {
       let roleRes = response.data
       if (roleRes.code == 200) {
-        userInfo.role_list = roleRes.data //全局角色列表缓存
+        userInfo.role_list = roleRes.data // 全局角色列表缓存
+        return api_get('/user/info').then((response2) => {
+          let res = response2.data
+          if (res.code == 200) {
+            res.data.headurl = getHostUrl(res.data.headurl)
+            userInfo.data = res.data
+            userInfo.state.isLogin = true
+            userInfo.data.isAdmin = /1/g.test(res.data.role)
+            userInfo.state.unreadMessage = res.unreadMessage
+            return true
+          }
+          return false
+        })
+      } else {
+        return false
       }
     })
     .catch((err: any) => {
@@ -33,24 +48,17 @@ export function getInformation(callback: any = null) {
         type: 'error',
         message: '社区连接失败，请刷新重试',
       })
-      // window.open(`${Cfg.config.captchaserver}?url=${Cfg.config.view}`, '_self')
+      return false
     })
+}
+
+export function getRoleRes() {
+  let { userInfo } = Cfg
   api_get('/mod/global_data_list').then((response) => {
     let roleRes = response.data
     if (roleRes.code == 200) {
       userInfo.global_mod_data_list = roleRes.data //全局标签数据缓存
     }
-    api_get('/user/info').then((response2) => {
-      let res = response2.data
-      if (res.code == 200) {
-        res.data.headurl = getHostUrl(res.data.headurl)
-        userInfo.data = res.data
-        userInfo.state.isLogin = true
-        userInfo.data.isAdmin = /1/g.test(res.data.role)
-        userInfo.state.unreadMessage = res.unreadMessage
-      }
-      if (callback != null) callback()
-    })
   })
 }
 
@@ -58,10 +66,14 @@ export function getInformation(callback: any = null) {
  * 获取板块列表
  */
 export async function getcate() {
+  let { userInfo } = Cfg
   return await api_get('/cate/list')
     .then((response) => {
       let res: api = response.data
       if (res.code == 200) {
+        for (const x of res.data) {
+          userInfo.cate_list[x.id] = x.name
+        }
         return res.data as cateList[]
       } else {
         ElMessage({
