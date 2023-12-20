@@ -1,8 +1,8 @@
 import axios from 'axios'
 import * as Cfg from '../config'
 import { ElMessage } from 'element-plus'
-import { getHostUrl, formatBbsTime, getNumber, localSet } from './tools'
-import { api, bbsItem, getUserInfoType, viewBbsItem } from '@/types'
+import { getHostUrl, formatBbsTime, getNumber, localSet, decode, formatNormalTime } from './tools'
+import { api, bbsItem, cateList, getUserInfoType, viewBbsItem } from '@/types'
 import { api_get, getInformation } from './getApi'
 import { userInfo } from '../config'
 
@@ -14,7 +14,7 @@ axios.defaults.withCredentials = true
  * @param {string} path 请求路径
  * @param {object} data 请求体
  */
-export function api_post(path: string, data: object) {
+export function api_post(path: string, data = {}) {
   return axios.post(`${Cfg.config.server}${path}`, data)
 }
 
@@ -65,7 +65,7 @@ export async function getBbsList(id: string, body: { limit: number; page: number
       if (res.data.code != 200) return
       const data = res.data.data as bbsItem[]
       console.log('postdata', res.data)
-      let num = Math.ceil(res.data.sum.total / body.limit)
+      let num = Math.ceil(res.data.num / body.limit)
 
       let list = [] as viewBbsItem[]
       data.forEach((el) => {
@@ -137,7 +137,7 @@ export async function login(url: string, body: any, remember = false) {
   let obj = res.data
   if (obj.code == 200) {
     if (url == '/user/login') {
-      api_get('/user/info').then((response2: any) => {
+      api_post('/user/info').then((response2: any) => {
         if (response2.data.code == 200) {
           if (remember) {
             localSet('loginInfo', {
@@ -242,6 +242,91 @@ export async function setAvatar(e: any) {
 }
 
 /**
+ * 获取板块列表
+ */
+export async function getcate() {
+  let { userInfo } = Cfg
+  return await api_post('/cate/list')
+    .then((response) => {
+      let res: api = response.data
+      if (res.code == 200) {
+        for (const x of res.data) {
+          userInfo.cate_list[x.id] = x.name
+        }
+        return res.data as cateList[]
+      } else {
+        ElMessage({
+          type: 'error',
+          message: res.msg,
+        })
+        return null
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'error',
+        message: '获取板块列表出错',
+      })
+      return null
+    })
+}
+
+/**
+ * 获取帖子详情
+ * @param id 帖子id
+ */
+export async function getBbs(id: number) {
+  return await api_post(`/bbs/item/${id}`).then((res) => {
+    let obj = res.data as api
+    if (obj.code == 200) {
+      let item: viewBbsItem = obj.data
+      item.time = formatNormalTime(obj.data.time)
+      item.likes = getNumber(obj.data.likes)
+      item.dislikes = getNumber(obj.data.dislikes)
+      item.comments = getNumber(obj.data.comments)
+      item.views = getNumber(obj.data.views)
+      item.like = getNumber(obj.data.like)
+      item.author.headurl = getHostUrl(obj.data.author.headurl)
+      item.cover = getHostUrl(obj.data.cover)
+      return item
+    } else {
+      return false
+    }
+  })
+}
+
+/**
+ * 获取帖子中的回复
+ * @param id 帖子id
+ * @param page 页数
+ * @param limit 条目数
+ * @param sort 排序方式
+ */
+export async function getBbsReply(id: number, page: number, limit: number, sort: number) {
+  return await api_post(`/bbs/reply_list/${id}`, { page, limit, sort }).then((res) => {
+    let obj = res.data as api
+    let list: any[] = []
+    if (obj.code == 200) {
+      obj.data.forEach((el: any) => {
+        el.time = formatBbsTime(el.time)
+        el.author.headurl = getHostUrl(el.author.headurl)
+        if (el.children) {
+          el.children = el.children.map((x: any) => {
+            x.time = formatNormalTime(x.time, 'M-D HH:mm').replace(/ /, '<br/>')
+            return x
+          })
+        }
+        list.push(el)
+      })
+      //移除id相同的内容
+      const uniqueArray = list.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id))
+      return { list: uniqueArray, num: obj.sum?.total }
+    }
+    return false
+  })
+}
+
+/**
  * 获取指定用户信息
  * @param id 用户id
  */
@@ -273,6 +358,21 @@ export async function getMyBbs(uid: number | string, config: object): Promise<fa
     .then((res) => {
       if (res.data.code == 200) {
         return res.data.data as any[]
+      } else {
+        return false
+      }
+    })
+    .catch(() => {
+      return false
+    })
+}
+
+export async function getCaptcha() {
+  return await api_get(`/captcha`)
+    .then(async (res) => {
+      if (res.data.code == 200) {
+        let data = decode(res.data.data)
+        return data as any
       } else {
         return false
       }

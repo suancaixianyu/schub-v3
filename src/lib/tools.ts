@@ -3,6 +3,11 @@ import { ElMessage } from 'element-plus'
 import useClipboard from 'vue-clipboard3'
 import moment from 'moment'
 const { toClipboard } = useClipboard()
+//@ts-ignore
+import { Buffer } from 'buffer'
+
+//@ts-ignore
+import cryptojs from 'crypto-js/md5'
 
 /**
  * 将资源相对路径转为绝对路径
@@ -198,21 +203,24 @@ export async function localGet(key: string, defaultValue: object) {
  * 解码角色列表
  * @param roleStr
  */
-export async function decodeRoleList(roleStr: string) {
+export async function decodeRoleList(roleStr: [] | null) {
   let {
     userInfo: { role_list },
   } = Cfg
   let result = [] as any
+  console.log('roleStr', roleStr, 'role_list', role_list)
+
   if (roleStr == null) return result
-  let arr = roleStr.split(',')
-  arr.forEach(async (x: string) => {
+
+  for (const x of roleStr) {
     let f = role_list.find((xx: any) => {
       return xx.id == x
     })
     if (f != null) {
       result.push(await copyObject(f))
     }
-  })
+  }
+
   return result
 }
 /**
@@ -353,4 +361,61 @@ export async function decodeRelationList(relationList: any) {
  */
 export async function copyObject(obj: any) {
   return JSON.parse(JSON.stringify(obj))
+}
+
+/**
+ * 解密密码
+ * @param {*} string 密码
+ */
+export function decode(string: string, key = 'schub') {
+  return logic(string, 'D', key)
+}
+
+function md5(str: string) {
+  return cryptojs(str).toString()
+}
+
+function logic(string: string, operation: string, key: string) {
+  // const src = ['/', '+', '=']
+  // const dist = ['_a', '_b', '_c']
+  if (operation === 'D') {
+    string = string.replace(/_a/g, '/').replace(/_b/g, '+').replace(/_c/g, '=')
+  }
+  key = md5(key)
+  const key_length = key.length
+  let k = md5(string + key)
+  string = operation === 'D' ? Buffer.from(string, 'base64').toString('binary') : k.slice(0, 8) + string
+  const string_length = string.length
+  let rndkey = []
+  let box = []
+  let result = ''
+
+  for (let i = 0; i <= 255; i++) {
+    rndkey[i] = key.charCodeAt(i % key_length)
+    box[i] = i
+  }
+
+  for (let j = 0, i = 0; i < 256; i++) {
+    j = (j + box[i] + rndkey[i]) % 256
+    ;[box[i], box[j]] = [box[j], box[i]]
+  }
+
+  for (let a = 0, j = 0, i = 0; i < string_length; i++) {
+    a = (a + 1) % 256
+    j = (j + box[a]) % 256
+    ;[box[a], box[j]] = [box[j], box[a]]
+    result += String.fromCharCode(string.charCodeAt(i) ^ box[(box[a] + box[j]) % 256])
+  }
+
+  if (operation === 'D') {
+    let k = md5(result.slice(8) + key)
+    if (result.slice(0, 8) === k.slice(0, 8)) {
+      return result.slice(8)
+    } else {
+      return ''
+    }
+  } else {
+    const rdata = Buffer.from(result, 'binary').toString('base64').replace(/=+$/, '')
+    return rdata.replace(/\//g, '_a').replace(/\+/g, '_b').replace(/=/g, '_c')
+  }
 }

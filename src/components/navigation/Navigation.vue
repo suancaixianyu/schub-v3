@@ -61,7 +61,12 @@
               {{ $t('usercard.6') }}
             </span>
           </template>
-          <el-menu-item-group v-for="(item, i) in tools" :key="i" :title="item.title" style="background-color: var(--el-bg-color)">
+          <el-menu-item-group
+            v-for="(item, i) in tools"
+            :key="i"
+            :title="item.title"
+            style="background-color: var(--el-bg-color)"
+          >
             <a :href="x.href" v-for="(x, j) in item.url" :key="j">
               <el-menu-item index="1">
                 <el-icon> <Paperclip /> </el-icon>{{ x.name }}
@@ -77,15 +82,26 @@
             <span>{{ $t('usercard.11') }}</span>
           </template>
 
-          <el-menu-item index="#" v-if="catelist.length == 0" style="background-color: var(--el-bg-color)"> {{ $t('usercard.10') }} </el-menu-item>
-          <el-menu-item :index="`/cate/${index}`" v-for="(x, index) of catelist" :key="x" style="background-color: var(--el-bg-color)"
+          <el-menu-item index="#" v-if="catelist.length == 0" style="background-color: var(--el-bg-color)">
+            {{ $t('usercard.10') }}
+          </el-menu-item>
+          <el-menu-item
+            :index="`/cate/${index}`"
+            v-for="(x, index) of catelist"
+            :key="x"
+            style="background-color: var(--el-bg-color)"
             ><span class="iconfont" v-html="config.cateicon[`${x.id}`] + ' ' + x.name"></span>
           </el-menu-item>
         </el-sub-menu>
 
         <el-menu-item index="#">
-          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between" @click="setTheme">
-            <span class="iconfont" v-if="config.setup.currentSkin" style="margin-left: 4px"> &#xe614; {{ $t('usercard.2') }}</span>
+          <div
+            style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between"
+            @click="setTheme"
+          >
+            <span class="iconfont" v-if="config.setup.currentSkin" style="margin-left: 4px">
+              &#xe614; {{ $t('usercard.2') }}</span
+            >
             <span class="iconfont" v-else style="margin-left: 4px"> &#xe615; {{ $t('usercard.2') }}</span>
             <el-switch
               style="margin-left: auto"
@@ -130,7 +146,9 @@
     <!-- <el-image fit="none" :lazy="true" src="../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png" class="headimg"></el-image> -->
     <img
       loading="lazy"
-      :src="userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png'"
+      :src="
+        userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png'
+      "
       :alt="$t('usercard.0')"
       class="headimg"
     />
@@ -154,9 +172,18 @@
       <div class="hr"></div>
 
       <div class="item" @click="setTheme">
-        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)">&#xe614; {{ $t('usercard.2') }}</span>
+        <span class="iconfont" v-if="config.setup.currentSkin" style="color: var(--el-text-color-primary)"
+          >&#xe614; {{ $t('usercard.2') }}</span
+        >
         <span class="iconfont" v-else>&#xe615; {{ $t('usercard.2') }}</span>
-        <el-switch class="switch" @click="setTheme" v-model="config.setup.currentSkin" inline-prompt active-text="是" inactive-text="否" />
+        <el-switch
+          class="switch"
+          @click="setTheme"
+          v-model="config.setup.currentSkin"
+          inline-prompt
+          active-text="是"
+          inactive-text="否"
+        />
       </div>
 
       <router-link to="/setup">
@@ -212,7 +239,13 @@
         </el-form-item>
 
         <el-form-item :label="$t('login.4')" prop="pass">
-          <el-input @keyup.enter="onlogin" v-model="loginconfig.login.pass" type="password" :placeholder="$t('login.5')" show-password />
+          <el-input
+            @keyup.enter="onlogin"
+            v-model="loginconfig.login.pass"
+            type="password"
+            :placeholder="$t('login.5')"
+            show-password
+          />
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="remember" :label="$t('login.6')" size="large" />
@@ -228,7 +261,15 @@
         </el-form-item>
       </el-form>
 
-      <el-form :rules="rules" :model="loginconfig.regitser" class="form" label-width="4.5rem" label-position="top" v-if="pageid == 2" status-icon>
+      <el-form
+        :rules="rules"
+        :model="loginconfig.regitser"
+        class="form"
+        label-width="4.5rem"
+        label-position="top"
+        v-if="pageid == 2"
+        status-icon
+      >
         <el-form-item>
           <span class="title">{{ page[pageid] }}</span>
         </el-form-item>
@@ -261,13 +302,18 @@
         <div class="item">
           <el-input v-model="imgcode" type="text" style="max-width: 300px" :placeholder="$t('login.18')" />
         </div>
-        <div class="item">
-          <div v-if="codeSrc == ''" style="width: 250px; height: 62px"></div>
-          <img v-else :src="codeSrc" @click="refreshCode" />
-        </div>
 
         <div class="item">
-          <vue-hcaptcha sitekey="ebc1a1c0-79d5-4979-839f-c32e938f3629" @verify="addHcaptchaToken"></vue-hcaptcha>
+          <VueSliderCaptcha
+            v-if="captcha.show"
+            ref="sliderCaptcha"
+            v-model="captcha.code"
+            :sliderSrc="captcha.src"
+            :y="captcha.y"
+            color="#1890ff"
+            @on-refresh="onRefresh"
+            @on-finish="onFinish"
+          ></VueSliderCaptcha>
         </div>
 
         <div class="item">
@@ -281,7 +327,7 @@
 
 <script lang="ts">
 import { themes } from '@style/themes.ts'
-import { getcate, writePools, config, getHostUrl, login, loginOut, localSet } from '@/api'
+import { getcate, writePools, config, getHostUrl, login, loginOut, localSet, getCaptcha } from '@/api'
 import { cateList } from '@/types'
 import UserHead from '@comps/user/UserHead.vue'
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
@@ -289,6 +335,7 @@ import { ElMessageBox } from 'element-plus'
 import UserRole from '@comps/user/UserRole.vue'
 import i18n from '@/i18n.ts'
 import { setup } from '@/config'
+import VueSliderCaptcha from 'vue-slider-captcha'
 export default {
   name: 'Navigation',
   data() {
@@ -327,6 +374,12 @@ export default {
       imgcode: '', // 图片验证马链接
       baseCodeSrc: src,
       signintitle: '',
+      captcha: {
+        show: false,
+        y: 0,
+        src: '',
+        code: 0,
+      },
       /** 外部工具 */
       tools: [
         {
@@ -360,14 +413,12 @@ export default {
           email: '',
           nickname: '',
           captcha_code: '',
-          pass_uuid: '',
           invitation: '',
         },
         login: {
           user: '',
           pass: '',
           captcha_code: '',
-          pass_uuid: '',
         },
       },
       /** 输入框错误提示 */
@@ -445,10 +496,12 @@ export default {
     UserHead,
     VueHcaptcha,
     UserRole,
+    VueSliderCaptcha,
   },
   async mounted() {
     this.switchTheme()
     const list = await getcate()
+    await this.onFinish()
     if (list) {
       this.catelist = [
         {
@@ -468,6 +521,21 @@ export default {
     }
   },
   methods: {
+    onRefresh() {
+      this.captcha.y = 0
+      this.captcha.src = ''
+      this.onFinish
+    },
+    async onFinish() {
+      let captcha = await getCaptcha()
+      console.log('captcha', captcha)
+
+      if (captcha) {
+        this.captcha.y = captcha.y
+        this.captcha.src = captcha.imgUrl
+        this.captcha.show = true
+      }
+    },
     setlang(lang: string) {
       i18n.setLocale(lang)
       setup.lang = lang
@@ -508,20 +576,19 @@ export default {
     /** 登录 */
     async onlogin() {
       if (this.loadingbutton) return
-      if (!this.captcha_code || !this.imgcode) {
-        alert(this.$t('login.prompt.5'))
-        return
-      }
+      // 缺少验证码
+      // if (!this.captcha_code || !this.imgcode) {
+      //   alert(this.$t('login.prompt.5'))
+      //   return
+      // }
       this.loadingbutton = true
       switch (this.backpage) {
         case 1:
           this.loginconfig.login.captcha_code = this.imgcode
-          this.loginconfig.login.pass_uuid = this.captcha_code
           this.loadingbutton = await login('/user/login', this.loginconfig.login, this.remember)
           break
         case 2:
           this.loginconfig.regitser.captcha_code = this.imgcode
-          this.loginconfig.regitser.pass_uuid = this.captcha_code
           this.loadingbutton = await login('/user/register', this.loginconfig.regitser, this.remember)
           break
       }

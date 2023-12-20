@@ -1,8 +1,9 @@
 import axios from 'axios'
 import * as Cfg from '../config'
 import { ElMessage } from 'element-plus'
-import { formatBbsTime, formatNormalTime, getHostUrl, getNumber } from './tools'
-import { api, cateList, viewBbsItem } from '../types'
+import { getHostUrl } from './tools'
+import { api } from '../types'
+import { api_post } from './postApi'
 
 //开启cookie携带
 axios.defaults.withCredentials = true
@@ -17,26 +18,26 @@ export function api_get(path: string) {
 /**
  * 刷新页面重新获取用户信息
  */
-export async function getInformation(): Promise<boolean> {
+export async function getInformation() {
   let { userInfo } = Cfg
 
   // 刷新页面重新获取用户信息
-  return await api_get('/user/role_list')
+  return await api_post('/user/role_list')
     .then((response) => {
-      let roleRes = response.data
-      if (roleRes.code == 200) {
-        userInfo.role_list = roleRes.data // 全局角色列表缓存
-        return api_get('/user/info').then((response2) => {
+      let res = response.data
+      if (res.code == 200) {
+        userInfo.role_list = res.data // 全局角色列表缓存
+        return api_post('/user/info').then((response2) => {
           let res = response2.data
           if (res.code == 200) {
             res.data.headurl = getHostUrl(res.data.headurl)
             userInfo.data = res.data
             userInfo.state.isLogin = true
-            userInfo.data.isAdmin = /1/g.test(res.data.role)
+            userInfo.data.isAdmin = res.data.role.map((x: any) => x == 1)
             userInfo.state.unreadMessage = res.unreadMessage
             return true
           }
-          return false
+          return true
         })
       } else {
         return false
@@ -54,42 +55,12 @@ export async function getInformation(): Promise<boolean> {
 
 export function getRoleRes() {
   let { userInfo } = Cfg
-  api_get('/mod/global_data_list').then((response) => {
+  api_post('/mod/global_data_list', {}).then((response) => {
     let roleRes = response.data
     if (roleRes.code == 200) {
       userInfo.global_mod_data_list = roleRes.data //全局标签数据缓存
     }
   })
-}
-
-/**
- * 获取板块列表
- */
-export async function getcate() {
-  let { userInfo } = Cfg
-  return await api_get('/cate/list')
-    .then((response) => {
-      let res: api = response.data
-      if (res.code == 200) {
-        for (const x of res.data) {
-          userInfo.cate_list[x.id] = x.name
-        }
-        return res.data as cateList[]
-      } else {
-        ElMessage({
-          type: 'error',
-          message: res.msg,
-        })
-        return null
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'error',
-        message: '获取板块列表出错',
-      })
-      return null
-    })
 }
 
 export async function likepost(id: number) {
@@ -105,60 +76,6 @@ export async function likepost(id: number) {
     })
 }
 
-/**
- * 获取帖子详情
- * @param id 帖子id
- */
-export async function getBbs(id: number) {
-  return await api_get(`/bbs/item/${id}`).then((res) => {
-    let obj = res.data as api
-    if (obj.code == 200) {
-      let item: viewBbsItem = obj.data
-      item.time = formatNormalTime(obj.data.time)
-      item.likes = getNumber(obj.data.likes)
-      item.dislikes = getNumber(obj.data.dislikes)
-      item.comments = getNumber(obj.data.comments)
-      item.views = getNumber(obj.data.views)
-      item.like = getNumber(obj.data.like)
-      item.author.headurl = getHostUrl(obj.data.author.headurl)
-      item.cover = getHostUrl(obj.data.cover)
-      return item
-    } else {
-      return false
-    }
-  })
-}
-
-/**
- * 获取帖子中的回复
- * @param id 帖子id
- * @param page 页数
- * @param limit 条目数
- * @param sort 排序方式
- */
-export async function getBbsReply(id: number, page: number, limit: number, sort: number) {
-  return await api_get(`/bbs/reply_list/${id}?page=${page}&limit=${limit}&sort=${sort}`).then((res) => {
-    let obj = res.data as api
-    let list: any[] = []
-    if (obj.code == 200) {
-      obj.data.forEach((el: any) => {
-        el.time = formatBbsTime(el.time)
-        el.author.headurl = getHostUrl(el.author.headurl)
-        if (el.children) {
-          el.children = el.children.map((x: any) => {
-            x.time = formatNormalTime(x.time, 'M-D HH:mm').replace(/ /, '<br/>')
-            return x
-          })
-        }
-        list.push(el)
-      })
-      //移除id相同的内容
-      const uniqueArray = list.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id))
-      return { list: uniqueArray, num: obj.sum?.total }
-    }
-    return false
-  })
-}
 /**
  * 回复点赞
  * @param id 回复id

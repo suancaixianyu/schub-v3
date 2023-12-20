@@ -56,7 +56,8 @@ export const setUserInfo = (data: any) => (userInfo = data)
 export { userInfo }
 export const config = {
   /** 后端服务器地址 */
-  server: 'https://m.schub.top',
+  // server: 'https://m.schub.top',
+  server: 'http://localhost:28887',
 }
 
 export const cateicon: cateIcon = {

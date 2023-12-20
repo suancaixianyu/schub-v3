@@ -50,6 +50,13 @@ export default defineConfig({
       '@img': resolve(__dirname, 'public', 'imgs'),
     },
   },
+  optimizeDeps: {
+    include: [
+      'crypto',
+      'randombytes',
+      // 其他可能用到的模块
+    ],
+  },
   // css: {
   //   preprocessorOptions: {
   //     scss: {
