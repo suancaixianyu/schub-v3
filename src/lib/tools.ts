@@ -364,10 +364,18 @@ export async function copyObject(obj: any) {
 }
 
 /**
+ * 加密密码
+ * @param {*} string 密码
+ */
+export function encode(string: string, key = 'schub'): string {
+  return logic(string, 'E', key)
+}
+
+/**
  * 解密密码
  * @param {*} string 密码
  */
-export function decode(string: string, key = 'schub') {
+export function decode(string: string, key = 'schub'): string {
   return logic(string, 'D', key)
 }
 

@@ -1,5 +1,6 @@
 <template>
   <ul class="navigation animate__backInDown" v-if="config.setup.showNavigation">
+    <!-- 标题 -->
     <li class="logo hidden-xs-only">
       <router-link to="/cate/0">
         <button>
@@ -15,6 +16,8 @@
     </li>
 
     <li style="width: 100%; flex: 2"></li>
+
+    <!-- 头像 -->
     <li class="right">
       <ul class="tools">
         <li>
@@ -94,6 +97,7 @@
           </el-menu-item>
         </el-sub-menu>
 
+        <!-- 主题切换 -->
         <el-menu-item index="#">
           <div
             style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between"
@@ -114,6 +118,7 @@
           </div>
         </el-menu-item>
 
+        <!-- 设置 -->
         <el-menu-item index="/setup">
           <el-icon>
             <setting />
@@ -121,6 +126,7 @@
           <span>{{ $t('usercard.3') }}</span>
         </el-menu-item>
 
+        <!-- 用户中心 -->
         <el-menu-item index="/user" v-if="userInfo.state.isLogin">
           <el-icon class="iconfont"> &#xe6a4; </el-icon>
           <span>{{ $t('usercard.4') }}</span>
@@ -140,19 +146,20 @@
 
   <!-- 遮罩 -->
   <div class="bg" v-if="bgshow" :class="bgstate" @click="start"></div>
-  <!-- 用户菜单 -->
+
+  <!-- 卡片菜单 -->
   <div class="usercard" :class="menustate" v-if="menu">
+    <!-- 背景 -->
     <!-- https://files.superbed.cn/store/superbed/1c/e8/64eb64df661c6c8e549e1ce8.png -->
     <!-- <el-image fit="none" :lazy="true" src="../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png" class="headimg"></el-image> -->
     <img
       loading="lazy"
-      :src="
-        userInfo.data.background ? userInfo.data.background : '../../../public/imgs/{2FB1489E-9572-4803-9114-850E04589091}.png'
-      "
+      :src="userInfo.data.background ? userInfo.data.background : '../../../public/imgs/b1.png'"
       :alt="$t('usercard.0')"
       class="headimg"
     />
     <div class="body">
+      <!-- 头像 -->
       <div class="head">
         <el-image class="headimage" v-if="userInfo.state.isLogin && userInfo.data.headurl" :src="userInfo.data.headurl" />
         <span class="headimage bj" v-else :title="userInfo.data.nickname" @click="openlogin">
@@ -226,18 +233,22 @@
       <el-divider>{{ $t('usercard.9') }}</el-divider>
     </div>
   </div>
+
   <!-- 登录卡片 -->
   <div class="bg" style="pointer-events: none">
     <div class="loginbody" v-if="signin" :class="loginstate">
       <el-image src="../../../public/imgs/109834519_p0.jpg" class="hidden-xs-only titleimg"></el-image>
+
+      <!-- 登录 -->
       <el-form :model="loginconfig.login" class="form" label-width="4rem" label-position="top" v-if="pageid == 1">
         <el-form-item>
           <span class="title">{{ page[pageid] }}</span>
         </el-form-item>
+        <!-- 账号 -->
         <el-form-item :label="$t('login.2')" prop="user">
           <el-input v-model="loginconfig.login.user" type="email" :placeholder="$t('login.3')" />
         </el-form-item>
-
+        <!-- 密码 -->
         <el-form-item :label="$t('login.4')" prop="pass">
           <el-input
             @keyup.enter="onlogin"
@@ -248,19 +259,23 @@
           />
         </el-form-item>
         <el-form-item>
+          <!-- 记住账号 -->
           <el-checkbox v-model="remember" :label="$t('login.6')" size="large" />
         </el-form-item>
 
+        <!-- 去注册 -->
         <el-form-item label="">
           <span>{{ $t('login.8') }}</span>
           <el-button type="primary" link @click="loginswitch(2)">{{ $t('login.11') }}</el-button>
         </el-form-item>
+        <!-- 按钮组 -->
         <el-form-item>
-          <el-button type="primary" @click="loginswitch(3)">{{ $t('login.0') }}</el-button>
+          <el-button type="primary" @click="showVcode = true">{{ $t('login.0') }}</el-button>
           <el-button @click="start">{{ $t('login.10') }}</el-button>
         </el-form-item>
       </el-form>
 
+      <!-- 注册 -->
       <el-form
         :rules="rules"
         :model="loginconfig.regitser"
@@ -285,42 +300,20 @@
         <el-form-item :label="$t('login.14')" prop="repass">
           <el-input v-model="loginconfig.regitser.repass" type="password" :placeholder="$t('login.5')" show-password />
         </el-form-item>
-        <el-form-item :label="$t('login.15')" prop="invitation">
-          <el-input v-model="loginconfig.regitser.invitation" type="text" :placeholder="$t('login.15')" />
-        </el-form-item>
+        <!-- 记住账号 -->
         <el-form-item label="">
           <span>{{ $t('login.17') }}</span>
           <el-button type="primary" link @click="loginswitch(1)">{{ $t('login.16') }}</el-button>
         </el-form-item>
+        <!-- 按钮组 -->
         <el-form-item>
-          <el-button type="primary" @click="loginswitch(3)">{{ $t('login.1') }}</el-button>
+          <el-button type="primary" @click="showVcode = true">{{ $t('login.1') }}</el-button>
           <el-button @click="start">{{ $t('login.10') }}</el-button>
         </el-form-item>
       </el-form>
 
-      <div v-if="pageid == 3" class="captcha">
-        <div class="item">
-          <el-input v-model="imgcode" type="text" style="max-width: 300px" :placeholder="$t('login.18')" />
-        </div>
-
-        <div class="item">
-          <VueSliderCaptcha
-            v-if="captcha.show"
-            ref="sliderCaptcha"
-            v-model="captcha.code"
-            :sliderSrc="captcha.src"
-            :y="captcha.y"
-            color="#1890ff"
-            @on-refresh="onRefresh"
-            @on-finish="onFinish"
-          ></VueSliderCaptcha>
-        </div>
-
-        <div class="item">
-          <el-button type="primary" @click="onlogin" :loading="loadingbutton">{{ $t('login.19') }}</el-button>
-          <el-button @click="loginswitch(backpage)">{{ $t('login.20') }}</el-button>
-        </div>
-      </div>
+      <!-- 验证码 -->
+      <Vcode :show="showVcode" @success="onlogin" @close="showVcode = false" :imgs="captcha.src" />
     </div>
   </div>
 </template>
@@ -335,7 +328,9 @@ import { ElMessageBox } from 'element-plus'
 import UserRole from '@comps/user/UserRole.vue'
 import i18n from '@/i18n.ts'
 import { setup } from '@/config'
-import VueSliderCaptcha from 'vue-slider-captcha'
+
+import Vcode from 'vue3-puzzle-vcode'
+
 export default {
   name: 'Navigation',
   data() {
@@ -355,30 +350,26 @@ export default {
       catelist: [] as cateList[],
       activeIndex: '/',
       menu: false,
+      isPassing: false,
+      showVcode: false,
       page: {
         1: '登录',
         2: '注册',
-        3: '验证码',
       },
       pageid: 1,
-      backpage: 1,
       bgshow: false,
-      menustate: '',
-      bgstate: '',
+      menustate: '', // 卡片菜单状态
+      bgstate: '', // 背景黑幕状态
       loginstate: '',
       remember: false, // 记住账号
       loadingbutton: false, // 登录按钮加载
       signin: false, // 显示登录卡片
-      codeSrc: '', // 图片验证
-      captcha_code: '', // 人机验证
-      imgcode: '', // 图片验证马链接
       baseCodeSrc: src,
       signintitle: '',
       captcha: {
         show: false,
-        y: 0,
-        src: '',
-        code: 0,
+        y: '',
+        src: [] as string[],
       },
       /** 外部工具 */
       tools: [
@@ -413,7 +404,6 @@ export default {
           email: '',
           nickname: '',
           captcha_code: '',
-          invitation: '',
         },
         login: {
           user: '',
@@ -496,7 +486,7 @@ export default {
     UserHead,
     VueHcaptcha,
     UserRole,
-    VueSliderCaptcha,
+    Vcode,
   },
   async mounted() {
     this.switchTheme()
@@ -521,19 +511,12 @@ export default {
     }
   },
   methods: {
-    onRefresh() {
-      this.captcha.y = 0
-      this.captcha.src = ''
-      this.onFinish
-    },
     async onFinish() {
       let captcha = await getCaptcha()
-      console.log('captcha', captcha)
-
       if (captcha) {
-        this.captcha.y = captcha.y
         this.captcha.src = captcha.imgUrl
         this.captcha.show = true
+        this.captcha.y = captcha.y
       }
     },
     setlang(lang: string) {
@@ -559,43 +542,29 @@ export default {
       }
       callback()
     },
-    /** 刷新图片验证码 */
-    refreshCode() {
-      this.imgcode = ''
-      this.codeSrc = this.baseCodeSrc + '?t=' + new Date().getTime()
-    },
     /** 页面切换 */
     loginswitch(id: number) {
-      this.backpage = this.pageid
       this.pageid = id
-      if (id == 3) this.refreshCode()
-    },
-    addHcaptchaToken(token: string) {
-      this.captcha_code = token
+      this.showVcode = true
     },
     /** 登录 */
     async onlogin() {
+      this.showVcode = false
       if (this.loadingbutton) return
-      // 缺少验证码
-      // if (!this.captcha_code || !this.imgcode) {
-      //   alert(this.$t('login.prompt.5'))
-      //   return
-      // }
       this.loadingbutton = true
-      switch (this.backpage) {
+      console.log('this.captcha.y', this.captcha.y)
+      switch (this.pageid) {
         case 1:
-          this.loginconfig.login.captcha_code = this.imgcode
+          this.loginconfig.login.captcha_code = this.captcha.y
           this.loadingbutton = await login('/user/login', this.loginconfig.login, this.remember)
           break
         case 2:
-          this.loginconfig.regitser.captcha_code = this.imgcode
+          this.loginconfig.regitser.captcha_code = this.captcha.y
           this.loadingbutton = await login('/user/register', this.loginconfig.regitser, this.remember)
           break
       }
       if (this.loadingbutton) {
         this.loadingbutton = false
-        this.refreshCode()
-        // this.loginswitch(this.backpage)
       } else {
         this.start()
       }

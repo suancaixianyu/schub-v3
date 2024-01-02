@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as Cfg from '../config'
 import { ElMessage } from 'element-plus'
-import { getHostUrl, formatBbsTime, getNumber, localSet, decode, formatNormalTime } from './tools'
+import { getHostUrl, formatBbsTime, getNumber, localSet, formatNormalTime, decode } from './tools'
 import { api, bbsItem, cateList, getUserInfoType, viewBbsItem } from '@/types'
 import { api_get, getInformation } from './getApi'
 import { userInfo } from '../config'
@@ -96,7 +96,7 @@ export async function getBbsList(id: string, body: { limit: number; page: number
  * 退出登录
  */
 export async function loginOut() {
-  api_get('/user/loginOut')
+  api_post('/user/loginOut')
     .then((res: any) => {
       if (res.data.code == 200) {
         ElMessage({
@@ -367,12 +367,12 @@ export async function getMyBbs(uid: number | string, config: object): Promise<fa
     })
 }
 
-export async function getCaptcha() {
+export async function getCaptcha(): Promise<false | { y: string; imgUrl: string[] }> {
   return await api_get(`/captcha`)
     .then(async (res) => {
       if (res.data.code == 200) {
-        let data = decode(res.data.data)
-        return data as any
+        let data = JSON.parse(decode(res.data.data))
+        return data as any as { y: string; imgUrl: string[] }
       } else {
         return false
       }

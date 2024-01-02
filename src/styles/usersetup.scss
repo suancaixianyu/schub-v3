@@ -1,9 +1,6 @@
 .usersetup {
-  display: flex;
-  justify-content: center;
-
   .group {
-    margin: 1rem 0;
+    margin: 1rem auto;
     border-radius: 0.5rem;
     width: 40vw;
     background-color: var(--el-color-info-light-9);
@@ -16,7 +13,7 @@
     border-radius: 0.5rem;
   }
   .item:hover {
-    background-color: var(--el-color-info-light-8);
+    background-color: var(--el-color-info-light-3);
   }
 
   @media (max-width: 768px) {
